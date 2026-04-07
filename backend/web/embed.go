@@ -1,4 +1,4 @@
-package main
+package web
 
 import (
 	"embed"
@@ -11,12 +11,11 @@ import (
 	"strings"
 )
 
-//go:generate sh -c "cd ../frontend && pnpm install && pnpm build && rm -rf ../backend/build && mkdir -p ../backend/build && cp -R build/. ../backend/build/"
-//go:embed all:build/*
+//go:embed all:static/*
 var files embed.FS
 
 func SvelteKitHandler(path string) http.Handler {
-	fsys, err := fs.Sub(files, "build")
+	fsys, err := fs.Sub(files, "static")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -1,3 +1,3 @@
-module journal/backend
+module journal
 
 go 1.22
