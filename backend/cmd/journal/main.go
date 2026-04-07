@@ -6,6 +6,7 @@ import (
 	"os"
 
 	api "journal/internal/api"
+	db "journal/internal/db"
 	web "journal/web"
 )
 
@@ -15,10 +16,17 @@ func main() {
 		port = "3000"
 	}
 
+	// Initialize database
+	dbConn, err := db.Setup()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer dbConn.Close()
+
 	mux := http.NewServeMux()
 
 	// Handle API routes
-	apiRouter := api.NewRouter()
+	apiRouter := api.NewRouter(dbConn)
 	mux.Handle("/api/", http.StripPrefix("/api", apiRouter))
 
 	// Embedded frontend
