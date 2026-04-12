@@ -1,13 +1,11 @@
 package main
 
 import (
+	"journal/internal"
+	"journal/web"
 	"log"
 	"net/http"
 	"os"
-
-	api "journal/internal/api"
-	db "journal/internal/db"
-	web "journal/web"
 )
 
 func main() {
@@ -17,16 +15,16 @@ func main() {
 	}
 
 	// Initialize database
-	dbConn, err := db.Setup()
+	db, err := internal.InitialiseDB("db.sqlite")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("database init failed: %v", err)
 	}
-	defer dbConn.Close()
+	defer db.Close()
 
 	mux := http.NewServeMux()
 
 	// Handle API routes
-	apiRouter := api.NewRouter(dbConn)
+	apiRouter := internal.NewRouter(db)
 	mux.Handle("/api/", http.StripPrefix("/api", apiRouter))
 
 	// Embedded frontend
